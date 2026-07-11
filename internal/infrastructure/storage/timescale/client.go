@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"coin-radar/internal/config"
-	"coin-radar/internal/infrastructure/storage/prisma"
+	"coin-radar-gin/internal/config"
+	"coin-radar-gin/internal/infrastructure/storage/prisma"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
