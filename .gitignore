@@ -1,0 +1,14 @@
+# Build artifacts
+bin/
+*.exe
+*.test
+*.out
+
+# Local configuration and runtime data
+.env
+.env.*
+!.env.example
+.cache/
+
+# Generated Prisma client
+internal/infrastructure/storage/prisma/*_gen.go

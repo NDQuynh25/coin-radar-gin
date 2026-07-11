@@ -1,0 +1,57 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator db {
+  provider = "go run github.com/steebchen/prisma-client-go"
+  output   = "../internal/infrastructure/storage/prisma"
+  package  = "prisma"
+}
+
+model User {
+  id            BigInt         @id @default(autoincrement())
+  telegram_id   BigInt?        @unique
+  email         String?        @unique
+  username      String?
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  alert_rules   AlertRule[]
+  subscriptions Subscription[]
+
+  @@map("users")
+}
+
+model Subscription {
+  id         BigInt    @id @default(autoincrement())
+  user_id    BigInt
+  user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  plan       String    @default("free")
+  status     String    @default("active")
+  started_at DateTime  @default(now())
+  expires_at DateTime?
+  created_at DateTime  @default(now())
+
+  @@map("subscriptions")
+  @@index([user_id])
+  @@index([status, expires_at])
+}
+
+model AlertRule {
+  id         BigInt    @id @default(autoincrement())
+  user_id    BigInt
+  user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  type       String
+  symbol     String
+  condition  String
+  threshold  Float
+  channel    String    @default("telegram")
+  is_active  Boolean   @default(true)
+  cooldown_s Int       @default(300)
+  last_fired DateTime?
+  created_at DateTime  @default(now())
+
+  @@map("alert_rules")
+  @@index([is_active, symbol, type])
+  @@index([user_id])
+}
