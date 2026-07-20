@@ -3,9 +3,9 @@ package signal
 import (
 	"net/http"
 
-	"coin-radar/internal/config"
-	signaldomain "coin-radar/internal/domain/signal"
-	"coin-radar/internal/interfaces/http/dto"
+	"coin-radar-gin/internal/config"
+	signaldomain "coin-radar-gin/internal/domain/signal"
+	"coin-radar-gin/internal/interfaces/http/dto"
 
 	"github.com/gin-gonic/gin"
 )

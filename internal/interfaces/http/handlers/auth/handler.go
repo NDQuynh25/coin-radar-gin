@@ -4,10 +4,10 @@ import (
 	"errors"
 	"net/http"
 
-	"coin-radar/internal/domain/user"
-	"coin-radar/internal/interfaces/http/dto"
-	"coin-radar/internal/interfaces/http/request"
-	authsvc "coin-radar/internal/services/auth"
+	"coin-radar-gin/internal/domain/user"
+	"coin-radar-gin/internal/interfaces/http/dto"
+	"coin-radar-gin/internal/interfaces/http/request"
+	authsvc "coin-radar-gin/internal/services/auth"
 
 	"github.com/gin-gonic/gin"
 )

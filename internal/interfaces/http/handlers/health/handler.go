@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	"coin-radar/internal/config"
-	"coin-radar/internal/interfaces/http/dto"
+	"coin-radar-gin/internal/config"
+	"coin-radar-gin/internal/interfaces/http/dto"
 
 	"github.com/gin-gonic/gin"
 )

@@ -2,7 +2,7 @@ app:
   env: "development" # development, production, staging
 
 server:
-  port: 9000
+  port: 9010
   read_timeout: 10
   write_timeout: 10
 

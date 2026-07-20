@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"coin-radar/internal/domain/user"
-	"coin-radar/internal/shared/token"
+	"coin-radar-gin/internal/domain/user"
+	"coin-radar-gin/internal/shared/token"
 
 	"golang.org/x/crypto/bcrypt"
 )

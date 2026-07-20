@@ -10,8 +10,8 @@ import (
 	"syscall"
 	"time"
 
-	"coin-radar/internal/config"
-	router "coin-radar/internal/interfaces/http"
+	"coin-radar-gin/internal/config"
+	router "coin-radar-gin/internal/interfaces/http"
 )
 
 func main() {

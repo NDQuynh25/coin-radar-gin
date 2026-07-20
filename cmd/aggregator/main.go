@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"coin-radar/internal/config"
+	"coin-radar-gin/internal/config"
 )
 
 func main() {

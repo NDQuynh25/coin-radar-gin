@@ -1,6 +1,6 @@
 package dto
 
-import "coin-radar/internal/domain/user"
+import "coin-radar-gin/internal/domain/user"
 
 // RegisterRequest is the body for POST /auth/register.
 type RegisterRequest struct {

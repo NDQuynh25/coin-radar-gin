@@ -3,7 +3,7 @@ package dto
 import (
 	"time"
 
-	"coin-radar/internal/domain/signal"
+	"coin-radar-gin/internal/domain/signal"
 )
 
 // APIError represents the detail of an error response

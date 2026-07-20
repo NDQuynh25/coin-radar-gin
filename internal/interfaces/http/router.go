@@ -3,16 +3,16 @@ package http
 import (
 	"time"
 
-	"coin-radar/internal/config"
-	"coin-radar/internal/infrastructure/storage/memory"
-	"coin-radar/internal/interfaces/http/request"
-	authsvc "coin-radar/internal/services/auth"
+	"coin-radar-gin/internal/config"
+	"coin-radar-gin/internal/infrastructure/storage/memory"
+	"coin-radar-gin/internal/interfaces/http/request"
+	authsvc "coin-radar-gin/internal/services/auth"
 
-	"coin-radar/internal/interfaces/http/handlers/auth"
-	"coin-radar/internal/interfaces/http/handlers/health"
-	"coin-radar/internal/interfaces/http/handlers/market"
-	"coin-radar/internal/interfaces/http/handlers/signal"
-	"coin-radar/internal/interfaces/http/handlers/user"
+	"coin-radar-gin/internal/interfaces/http/handlers/auth"
+	"coin-radar-gin/internal/interfaces/http/handlers/health"
+	"coin-radar-gin/internal/interfaces/http/handlers/market"
+	"coin-radar-gin/internal/interfaces/http/handlers/signal"
+	"coin-radar-gin/internal/interfaces/http/handlers/user"
 
 	"github.com/gin-gonic/gin"
 )

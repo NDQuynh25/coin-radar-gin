@@ -5,7 +5,7 @@ import (
 	"strings"
 	"sync"
 
-	"coin-radar/internal/domain/user"
+	"coin-radar-gin/internal/domain/user"
 )
 
 // UserRepository is an in-memory implementation of user.Repository.

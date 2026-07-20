@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"strings"
 
-	"coin-radar/internal/interfaces/http/dto"
+	"coin-radar-gin/internal/interfaces/http/dto"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"

@@ -1,4 +1,4 @@
-module coin-radar
+module coin-radar-gin
 
 go 1.26.4
 
