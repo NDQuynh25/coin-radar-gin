@@ -11,4 +11,4 @@ bin/
 .cache/
 
 # Generated Prisma client
-internal/infrastructure/storage/prisma/*_gen.go
+internal/platform/postgres/prisma/*_gen.go

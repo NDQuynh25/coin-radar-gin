@@ -6,12 +6,16 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/signal"
+	ossignal "os/signal"
 	"syscall"
 	"time"
 
-	"coin-radar-gin/internal/config"
-	router "coin-radar-gin/internal/interfaces/http"
+	"coin-radar-gin/config"
+	"coin-radar-gin/internal/modules/auth"
+	"coin-radar-gin/internal/modules/market"
+	"coin-radar-gin/internal/modules/signal"
+	"coin-radar-gin/internal/modules/user"
+	transport "coin-radar-gin/internal/platform/http"
 )
 
 func main() {
@@ -21,13 +25,27 @@ func main() {
 	cfg, err := config.LoadConfig("config.yaml")
 	if err != nil {
 		log.Printf("Warning: Failed to load config.yaml, using defaults: %v\n", err)
-		cfg = &config.Config{
-			Server: config.ServerConfig{Port: 9000},
-		}
+		cfg = config.Default()
 	}
 
-	// 2. Setup Gin Router
-	r := router.NewRouter(cfg)
+	// 2. Build application dependencies in the composition root.
+	// Replace this in-memory repository with a persistent implementation when ready.
+	userRepo := user.NewMemoryRepository()
+	authService := auth.NewService(userRepo, auth.Config{
+		JWTSecret:          cfg.Auth.JWTSecret,
+		AccessTTL:          time.Duration(cfg.Auth.AccessTokenTTL) * time.Minute,
+		RefreshTTL:         time.Duration(cfg.Auth.RefreshTokenTTL) * time.Hour,
+		TelegramBotToken:   cfg.Telegram.Token,
+		TelegramMaxAuthAge: 24 * time.Hour,
+	})
+
+	// 3. Setup Gin Router
+	r := transport.NewRouter(cfg)
+	v1 := r.Group("/api/v1")
+	market.New(cfg).Register(v1)
+	signal.New(cfg).Register(v1)
+	auth.NewAuthHandler(authService).Register(v1)
+	user.NewHandler(userRepo).Register(v1, authService)
 
 	// 4. HTTP Server config
 	srv := &http.Server{
@@ -46,7 +64,7 @@ func main() {
 	}()
 
 	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	ossignal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	log.Println("Shutting down API Server gracefully...")
 

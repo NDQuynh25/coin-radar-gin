@@ -1,11 +1,11 @@
 version: "2"
 sql:
   - schema: "migrations/"
-    queries: "internal/infrastructure/storage/timescale/queries.sql"
+    queries: "internal/platform/timescale/queries.sql"
     gen:
       go:
         package: "timescale"
-        out: "internal/infrastructure/storage/timescale"
+        out: "internal/platform/timescale"
         sql_package: "pgx/v5"
         emit_json_tags: true
         emit_db_tags: true
