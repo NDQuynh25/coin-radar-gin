@@ -7,12 +7,28 @@ import (
 )
 
 type Config struct {
-	App      AppConfig      `mapstructure:"app"`
-	Server   ServerConfig   `mapstructure:"server"`
-	Database DatabaseConfig `mapstructure:"database"`
-	Redis    RedisConfig    `mapstructure:"redis"`
-	Telegram TelegramConfig `mapstructure:"telegram"`
-	Auth     AuthConfig     `mapstructure:"auth"`
+	App       AppConfig        `mapstructure:"app"`
+	Server    ServerConfig     `mapstructure:"server"`
+	Database  DatabaseConfig   `mapstructure:"database"`
+	Redis     RedisConfig      `mapstructure:"redis"`
+	Telegram  TelegramConfig   `mapstructure:"telegram"`
+	Auth      AuthConfig       `mapstructure:"auth"`
+	Ingestor  IngestorConfig   `mapstructure:"ingestor"`
+	Exchanges []ExchangeConfig `mapstructure:"exchanges"`
+}
+
+type IngestorConfig struct {
+	BatchSize       int `mapstructure:"batch_size"`
+	FlushIntervalMS int `mapstructure:"flush_interval_ms"`
+	BufferSize      int `mapstructure:"buffer_size"`
+}
+
+type ExchangeConfig struct {
+	Name    string   `mapstructure:"name"`
+	Enabled bool     `mapstructure:"enabled"`
+	Market  string   `mapstructure:"market"`
+	URL     string   `mapstructure:"url"`
+	Symbols []string `mapstructure:"symbols"`
 }
 
 type AuthConfig struct {
@@ -89,5 +105,14 @@ func (c *Config) applyDefaults() {
 	}
 	if c.Auth.RefreshTokenTTL == 0 {
 		c.Auth.RefreshTokenTTL = 24 * 7
+	}
+	if c.Ingestor.BatchSize == 0 {
+		c.Ingestor.BatchSize = 500
+	}
+	if c.Ingestor.FlushIntervalMS == 0 {
+		c.Ingestor.FlushIntervalMS = 1000
+	}
+	if c.Ingestor.BufferSize == 0 {
+		c.Ingestor.BufferSize = 10000
 	}
 }

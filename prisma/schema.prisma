@@ -5,17 +5,20 @@ datasource db {
 
 generator db {
   provider = "go run github.com/steebchen/prisma-client-go"
-  output   = "../internal/platform/postgres/prisma"
+  output   = "../internal/platform/database/prisma"
   package  = "prisma"
 }
 
 model User {
-  id            BigInt         @id @default(autoincrement())
+  id            String         @id @default(uuid()) @db.Uuid
   telegram_id   BigInt?        @unique
   email         String?        @unique
   username      String?
-  created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @default(now()) @updatedAt @map("updated_at")
+  deletedAt     DateTime?      @map("deleted_at")
+  createdBy     String?        @db.Uuid @map("created_by")
+  updatedBy     String?        @db.Uuid @map("updated_by")
   alert_rules   AlertRule[]
   subscriptions Subscription[]
 
@@ -23,14 +26,18 @@ model User {
 }
 
 model Subscription {
-  id         BigInt    @id @default(autoincrement())
-  user_id    BigInt
+  id         String    @id @default(uuid()) @db.Uuid
+  user_id    String    @db.Uuid
   user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
   plan       String    @default("free")
   status     String    @default("active")
   started_at DateTime  @default(now())
   expires_at DateTime?
-  created_at DateTime  @default(now())
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @default(now()) @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+  createdBy  String?   @db.Uuid @map("created_by")
+  updatedBy  String?   @db.Uuid @map("updated_by")
 
   @@map("subscriptions")
   @@index([user_id])
@@ -38,8 +45,8 @@ model Subscription {
 }
 
 model AlertRule {
-  id         BigInt    @id @default(autoincrement())
-  user_id    BigInt
+  id         String    @id @default(uuid()) @db.Uuid
+  user_id    String    @db.Uuid
   user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
   type       String
   symbol     String
@@ -49,7 +56,11 @@ model AlertRule {
   is_active  Boolean   @default(true)
   cooldown_s Int       @default(300)
   last_fired DateTime?
-  created_at DateTime  @default(now())
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @default(now()) @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+  createdBy  String?   @db.Uuid @map("created_by")
+  updatedBy  String?   @db.Uuid @map("updated_by")
 
   @@map("alert_rules")
   @@index([is_active, symbol, type])

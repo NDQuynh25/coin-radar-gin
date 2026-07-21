@@ -84,7 +84,8 @@ function testWebSocket(exId) {
     try {
       ws = new WebSocket(cfg.url);
     } catch (e) {
-      return finish(false, 'không tạo được WebSocket: ' + e.message);
+      finish(false, 'không tạo được WebSocket: ' + e.message);
+      return;
     }
 
     const timer = setTimeout(

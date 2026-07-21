@@ -12,7 +12,7 @@ import (
 // Cursor is for lists ordered by created_at DESC, id DESC.
 type Cursor struct {
 	CreatedAt time.Time `json:"created_at"`
-	ID        int64     `json:"id"`
+	ID        string    `json:"id"`
 }
 
 type CursorParams struct {
@@ -37,7 +37,7 @@ func ParseCursor(query url.Values) (CursorParams, error) {
 }
 
 func EncodeCursor(cursor Cursor) (string, error) {
-	if cursor.ID <= 0 || cursor.CreatedAt.IsZero() {
+	if cursor.ID == "" || cursor.CreatedAt.IsZero() {
 		return "", ErrInvalidCursor
 	}
 	payload, err := json.Marshal(cursor)
@@ -53,7 +53,7 @@ func DecodeCursor(encoded string) (Cursor, error) {
 		return Cursor{}, ErrInvalidCursor
 	}
 	var cursor Cursor
-	if err := json.Unmarshal(payload, &cursor); err != nil || cursor.ID <= 0 || cursor.CreatedAt.IsZero() {
+	if err := json.Unmarshal(payload, &cursor); err != nil || cursor.ID == "" || cursor.CreatedAt.IsZero() {
 		return Cursor{}, ErrInvalidCursor
 	}
 	return cursor, nil

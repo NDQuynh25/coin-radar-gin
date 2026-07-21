@@ -4,7 +4,7 @@ import "time"
 
 type Signal struct {
 	Time      time.Time              `json:"time"`
-	ID        int64                  `json:"id"`
+	ID        string                 `json:"id"`
 	Type      string                 `json:"type"` // funding_spike, oi_delta, volume_spike...
 	Exchange  string                 `json:"exchange,omitempty"`
 	Symbol    string                 `json:"symbol"`

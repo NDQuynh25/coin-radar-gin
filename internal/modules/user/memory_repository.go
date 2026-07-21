@@ -4,22 +4,22 @@ import (
 	"context"
 	"strings"
 	"sync"
+
+	"github.com/google/uuid"
 )
 
 // UserRepository is an in-memory implementation of user.Repository.
 // It is intended for development and tests; swap for a Postgres-backed
 // implementation in production.
 type UserRepository struct {
-	mu     sync.RWMutex
-	byID   map[int64]*User
-	nextID int64
+	mu   sync.RWMutex
+	byID map[string]*User
 }
 
 // NewUserRepository creates an empty in-memory user store.
 func NewMemoryRepository() *UserRepository {
 	return &UserRepository{
-		byID:   make(map[int64]*User),
-		nextID: 0,
+		byID: make(map[string]*User),
 	}
 }
 
@@ -27,8 +27,9 @@ func (r *UserRepository) Create(ctx context.Context, u *User) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	r.nextID++
-	u.ID = r.nextID
+	if u.ID == "" {
+		u.ID = uuid.NewString()
+	}
 	// Store a copy so callers cannot mutate our state through the pointer.
 	stored := *u
 	r.byID[u.ID] = &stored
@@ -47,7 +48,7 @@ func (r *UserRepository) Update(ctx context.Context, u *User) error {
 	return nil
 }
 
-func (r *UserRepository) FindByID(ctx context.Context, id int64) (*User, error) {
+func (r *UserRepository) FindByID(ctx context.Context, id string) (*User, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 

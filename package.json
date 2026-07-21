@@ -1,0 +1,11 @@
+{
+  "name": "coin-radar-gin-tools",
+  "private": true,
+  "scripts": {
+    "lint": "eslint tools/**/*.js",
+    "lint:fix": "eslint tools/**/*.js --fix"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0"
+  }
+}

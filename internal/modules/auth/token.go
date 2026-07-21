@@ -2,10 +2,10 @@ package auth
 
 import (
 	"errors"
-	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 )
 
 type tokenType string
@@ -57,7 +57,7 @@ type TokenPair struct {
 	ExpiresIn    int64
 }
 
-func (s *Service) generateTokens(userID int64, now time.Time) (TokenPair, error) {
+func (s *Service) generateTokens(userID string, now time.Time) (TokenPair, error) {
 	access, err := s.signToken(userID, accessTokenType, s.accessTTL, now)
 	if err != nil {
 		return TokenPair{}, err
@@ -69,26 +69,25 @@ func (s *Service) generateTokens(userID int64, now time.Time) (TokenPair, error)
 	return TokenPair{AccessToken: access, RefreshToken: refresh, ExpiresIn: int64(s.accessTTL.Seconds())}, nil
 }
 
-func (s *Service) signToken(userID int64, typ tokenType, ttl time.Duration, now time.Time) (string, error) {
+func (s *Service) signToken(userID string, typ tokenType, ttl time.Duration, now time.Time) (string, error) {
 	return s.tokens.sign(Claims{
 		Type: typ,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Subject: strconv.FormatInt(userID, 10), IssuedAt: jwt.NewNumericDate(now), ExpiresAt: jwt.NewNumericDate(now.Add(ttl)),
+			Subject: userID, IssuedAt: jwt.NewNumericDate(now), ExpiresAt: jwt.NewNumericDate(now.Add(ttl)),
 		},
 	})
 }
 
-func (s *Service) verifyToken(tokenString string, expected tokenType) (int64, error) {
+func (s *Service) verifyToken(tokenString string, expected tokenType) (string, error) {
 	claims := &Claims{}
 	if err := s.tokens.parse(tokenString, claims); err != nil {
-		return 0, ErrInvalidToken
+		return "", ErrInvalidToken
 	}
 	if claims.Type != expected {
-		return 0, ErrWrongTokenType
+		return "", ErrWrongTokenType
 	}
-	userID, err := strconv.ParseInt(claims.Subject, 10, 64)
-	if err != nil {
-		return 0, ErrInvalidToken
+	if _, err := uuid.Parse(claims.Subject); err != nil {
+		return "", ErrInvalidToken
 	}
-	return userID, nil
+	return claims.Subject, nil
 }

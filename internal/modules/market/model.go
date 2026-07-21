@@ -3,6 +3,7 @@ package market
 import "time"
 
 type Trade struct {
+	TradeID  string    `json:"trade_id"`
 	Time     time.Time `json:"time"`
 	Exchange string    `json:"exchange"`
 	Symbol   string    `json:"symbol"`

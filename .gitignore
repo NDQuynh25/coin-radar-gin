@@ -4,6 +4,13 @@ bin/
 *.test
 *.out
 
+# Node.js dependencies and logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
 # Local configuration and runtime data
 .env
 .env.*

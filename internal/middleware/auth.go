@@ -15,7 +15,7 @@ const ctxUserIDKey = "auth_user_id"
 // TokenVerifier is the minimal dependency the auth middleware needs.
 // *auth.Service satisfies this.
 type TokenVerifier interface {
-	VerifyAccessToken(token string) (int64, error)
+	VerifyAccessToken(token string) (string, error)
 }
 
 // Auth returns middleware that requires a valid Bearer access token.
@@ -43,12 +43,12 @@ func Auth(v TokenVerifier) gin.HandlerFunc {
 }
 
 // UserID returns the authenticated user id set by the Auth middleware.
-func UserID(c *gin.Context) (int64, bool) {
+func UserID(c *gin.Context) (string, bool) {
 	v, ok := c.Get(ctxUserIDKey)
 	if !ok {
-		return 0, false
+		return "", false
 	}
-	id, ok := v.(int64)
+	id, ok := v.(string)
 	return id, ok
 }
 

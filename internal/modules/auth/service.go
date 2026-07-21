@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"coin-radar-gin/internal/modules/user"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -139,7 +140,7 @@ func (s *Service) Refresh(ctx context.Context, refreshToken string) (TokenPair, 
 	return s.generateTokens(userID, s.now())
 }
 
-func (s *Service) VerifyAccessToken(accessToken string) (int64, error) {
+func (s *Service) VerifyAccessToken(accessToken string) (string, error) {
 	return s.verifyToken(accessToken, accessTokenType)
 }
 
