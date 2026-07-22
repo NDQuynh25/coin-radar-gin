@@ -14,9 +14,9 @@ import (
 func main() {
 	log.Println("Starting Background Aggregator...")
 
-	cfg, err := config.LoadConfig("config.yaml")
+	cfg, err := config.LoadConfig(".env")
 	if err != nil {
-		log.Printf("Warning: Failed to load config.yaml, using defaults: %v\n", err)
+		log.Printf("Warning: Failed to load .env, using defaults: %v\n", err)
 		cfg = &config.Config{}
 	}
 	_ = cfg

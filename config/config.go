@@ -1,9 +1,13 @@
 package config
 
 import (
-	"strings"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"os"
+	"strconv"
 
-	"github.com/spf13/viper"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -67,26 +71,85 @@ type TelegramConfig struct {
 	ChannelID string `mapstructure:"channel_id"`
 }
 
-func LoadConfig(path string) (*Config, error) {
-	viper.SetConfigFile(path)
-	viper.AutomaticEnv()
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	if err := viper.ReadInConfig(); err != nil {
+// LoadConfig loads local values from an optional .env file. Existing process
+// environment variables take precedence, so the same code works in Docker and
+// production without a .env file.
+func LoadConfig(envFile string) (*Config, error) {
+	if envFile != "" {
+		if err := godotenv.Load(envFile); err != nil && !errors.Is(err, os.ErrNotExist) {
+			return nil, fmt.Errorf("load %s: %w", envFile, err)
+		}
+	}
+
+	var config Config
+	var err error
+	config.App.Env = os.Getenv("APP_ENV")
+	if config.Server.Port, err = envInt("SERVER_PORT"); err != nil {
 		return nil, err
 	}
-	var config Config
-	if err := viper.Unmarshal(&config); err != nil {
+	if config.Server.ReadTimeout, err = envInt("SERVER_READ_TIMEOUT"); err != nil {
 		return nil, err
+	}
+	if config.Server.WriteTimeout, err = envInt("SERVER_WRITE_TIMEOUT"); err != nil {
+		return nil, err
+	}
+	config.Database.Host = os.Getenv("DATABASE_HOST")
+	if config.Database.Port, err = envInt("DATABASE_PORT"); err != nil {
+		return nil, err
+	}
+	config.Database.User = os.Getenv("DATABASE_USER")
+	config.Database.Password = os.Getenv("DATABASE_PASSWORD")
+	config.Database.Name = os.Getenv("DATABASE_NAME")
+	config.Database.SSLMode = os.Getenv("DATABASE_SSLMODE")
+	config.Redis.Addr = os.Getenv("REDIS_ADDR")
+	config.Redis.Password = os.Getenv("REDIS_PASSWORD")
+	if config.Redis.DB, err = envInt("REDIS_DB"); err != nil {
+		return nil, err
+	}
+	config.Telegram.Token = os.Getenv("TELEGRAM_TOKEN")
+	config.Telegram.ChannelID = os.Getenv("TELEGRAM_CHANNEL_ID")
+	config.Auth.JWTSecret = os.Getenv("AUTH_JWT_SECRET")
+	if config.Auth.AccessTokenTTL, err = envInt("AUTH_ACCESS_TOKEN_TTL"); err != nil {
+		return nil, err
+	}
+	if config.Auth.RefreshTokenTTL, err = envInt("AUTH_REFRESH_TOKEN_TTL"); err != nil {
+		return nil, err
+	}
+	if config.Ingestor.BatchSize, err = envInt("INGESTOR_BATCH_SIZE"); err != nil {
+		return nil, err
+	}
+	if config.Ingestor.FlushIntervalMS, err = envInt("INGESTOR_FLUSH_INTERVAL_MS"); err != nil {
+		return nil, err
+	}
+	if config.Ingestor.BufferSize, err = envInt("INGESTOR_BUFFER_SIZE"); err != nil {
+		return nil, err
+	}
+	if raw := os.Getenv("EXCHANGES"); raw != "" {
+		if err := json.Unmarshal([]byte(raw), &config.Exchanges); err != nil {
+			return nil, fmt.Errorf("parse EXCHANGES: %w", err)
+		}
 	}
 	config.applyDefaults()
 	return &config, nil
+}
+
+func envInt(key string) (int, error) {
+	raw := os.Getenv(key)
+	if raw == "" {
+		return 0, nil
+	}
+	value, err := strconv.Atoi(raw)
+	if err != nil {
+		return 0, fmt.Errorf("%s must be an integer: %w", key, err)
+	}
+	return value, nil
 }
 
 // Default returns a complete development configuration.
 func Default() *Config { config := &Config{}; config.applyDefaults(); return config }
 
 // applyDefaults fills in sensible fallbacks for optional settings so the app
-// stays runnable in development even without a full config.yaml.
+// stays runnable in development with a minimal .env file.
 func (c *Config) applyDefaults() {
 	if c.Server.Port == 0 {
 		c.Server.Port = 9000

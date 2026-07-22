@@ -141,7 +141,7 @@ coin-radar/
 ├── sqlc.yaml                    # Cấu hình SQL compiler (sqlc)
 ├── Makefile                     # Shortcut commands (run, build, migrate, gen-sqlc)
 ├── docker-compose.yml           # local dev: TimescaleDB + Redis
-├── config.yaml                  # File config dev
+├── .env                         # File config dev (không commit)
 ├── go.mod                       # Go module file
 └── README.md
 ```

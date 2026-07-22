@@ -17,7 +17,7 @@ Backend độc lập cho Coin Radar, gồm REST API và các worker Go.
    go run github.com/steebchen/prisma-client-go generate
    ```
 
-4. Cập nhật `config.yaml` (đặc biệt là `auth.jwt_secret` và Telegram nếu dùng), sau đó chạy API:
+4. Copy `.env.example` thành `.env`, cập nhật `AUTH_JWT_SECRET` và Telegram nếu dùng, sau đó chạy API:
 
    ```bash
    go run ./cmd/api
