@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS watchlists;
+DROP TABLE IF EXISTS alert_rules;

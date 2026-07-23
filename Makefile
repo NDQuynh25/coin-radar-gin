@@ -1,6 +1,4 @@
-.PHONY: dev-up dev-down sqlc-gen prisma-gen prisma-push tidy build run-api run-ingestor run-bot run-aggregator
-
-DB_URL=postgres://postgres:postgres_password@localhost:5432/coin_radar?sslmode=disable
+.PHONY: dev-up dev-down migrate-up migrate-down sqlc-gen tidy build run-api run-ingestor run-bot run-aggregator
 
 dev-up:
 	docker compose up -d
@@ -8,14 +6,14 @@ dev-up:
 dev-down:
 	docker compose down
 
+migrate-up:
+	go run ./cmd/migrate up
+
+migrate-down:
+	@echo "Down migrations are intentionally not automated. Restore from backup or add an explicit rollback command."
+
 sqlc-gen:
 	sqlc generate
-
-prisma-gen:
-	go run github.com/steebchen/prisma-client-go generate
-
-prisma-push:
-	go run github.com/steebchen/prisma-client-go db push
 
 tidy:
 	go mod tidy

@@ -25,9 +25,8 @@ internal/
   alert/        model và repository contract
   platform/
     web/          Gin bootstrap, health, request và response dùng chung
-    postgres/
-      prisma/     relational client do Prisma generate
-    timescale/    pgx connection và sqlc queries
+    database/
+      timescale/  pgx connection và repository implementation
   config/       cấu hình ứng dụng
 ```
 
@@ -51,21 +50,13 @@ Quy tắc:
 
 ## Phân chia database
 
-- Prisma: user, subscription, alert rule và dữ liệu relational.
-- pgx/sqlc + TimescaleDB: trade, candle, tick và dữ liệu time-series khối lượng lớn.
+- SQL migrations: nguồn schema duy nhất cho PostgreSQL/TimescaleDB.
+- GORM: CRUD/query đơn giản cho dữ liệu relational.
+- GORM có thể đọc hypertable cho dashboard/query đơn giản; ingest batch vẫn dùng pgx.
+- pgx/sqlc: batch insert, transaction và query time-series/TimescaleDB hiệu năng cao.
 - Redis: cache, stream hoặc queue khi các luồng xử lý thực sự cần đến.
 
-Service không được phụ thuộc trực tiếp vào generated Prisma/sqlc code. Generated client được bọc bởi repository implementation.
-
-## Generated code
-
-Sau khi clone hoặc thay đổi `prisma/schema.prisma`, chạy:
-
-```powershell
-go run github.com/steebchen/prisma-client-go generate
-```
-
-Generated Prisma files không được commit. CI phải generate chúng trước khi build hoặc test.
+Schema chỉ thay đổi qua migration versioned trong `migrations/`. GORM không được gọi `AutoMigrate`; code nghiệp vụ không truy vấn database trực tiếp.
 
 ## Nguyên tắc mở rộng
 

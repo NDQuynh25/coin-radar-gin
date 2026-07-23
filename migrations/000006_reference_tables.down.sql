@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS known_wallets;
+DROP TABLE IF EXISTS symbols;

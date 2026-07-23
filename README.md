@@ -11,10 +11,10 @@ Backend độc lập cho Coin Radar, gồm REST API và các worker Go.
    docker compose up -d
    ```
 
-3. Generate Prisma client:
+3. Chạy database migration:
 
    ```bash
-   go run github.com/steebchen/prisma-client-go generate
+   go run ./cmd/migrate up
    ```
 
 4. Copy `.env.example` thành `.env`, cập nhật `AUTH_JWT_SECRET` và Telegram nếu dùng, sau đó chạy API:
@@ -25,6 +25,8 @@ Backend độc lập cho Coin Radar, gồm REST API và các worker Go.
 
 API mặc định chạy tại `http://localhost:9000`, với endpoint health là
 `GET /health` và API là `/api/v1`.
+
+Schema được quản lý bằng SQL migrations. GORM chỉ dùng cho CRUD đơn giản và không dùng `AutoMigrate`.
 
 ## Các lệnh hữu ích
 

@@ -14,35 +14,6 @@ type TradeRepository struct{ pool *pgxpool.Pool }
 
 func NewTradeRepository(pool *pgxpool.Pool) *TradeRepository { return &TradeRepository{pool: pool} }
 
-func (r *TradeRepository) EnsureSchema(ctx context.Context) error {
-	const schema = `
-CREATE EXTENSION IF NOT EXISTS timescaledb;
-CREATE TABLE IF NOT EXISTS trades (
-    id UUID NOT NULL DEFAULT gen_random_uuid(),
-    time TIMESTAMPTZ NOT NULL,
-    exchange TEXT NOT NULL,
-    trade_id TEXT NOT NULL,
-    symbol TEXT NOT NULL,
-    price DOUBLE PRECISION NOT NULL,
-    qty DOUBLE PRECISION NOT NULL,
-    side TEXT NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    deleted_at TIMESTAMPTZ,
-    created_by UUID,
-    updated_by UUID,
-    PRIMARY KEY (time, id),
-    UNIQUE (time, exchange, trade_id)
-);
-SELECT create_hypertable('trades', by_range('time'), if_not_exists => TRUE);
-CREATE INDEX IF NOT EXISTS idx_trades_symbol_time ON trades (symbol, time DESC);
-CREATE INDEX IF NOT EXISTS idx_trades_exchange_time ON trades (exchange, time DESC);`
-	if _, err := r.pool.Exec(ctx, schema); err != nil {
-		return fmt.Errorf("initialize trades schema: %w", err)
-	}
-	return nil
-}
-
 func (r *TradeRepository) Save(ctx context.Context, trade *market.Trade) error {
 	return r.SaveBatch(ctx, []*market.Trade{trade})
 }

@@ -15,6 +15,7 @@ import (
 	"coin-radar-gin/internal/modules/market"
 	"coin-radar-gin/internal/modules/signal"
 	"coin-radar-gin/internal/modules/user"
+	"coin-radar-gin/internal/platform/database/orm"
 	transport "coin-radar-gin/internal/platform/http"
 )
 
@@ -29,8 +30,16 @@ func main() {
 	}
 
 	// 2. Build application dependencies in the composition root.
-	// Replace this in-memory repository with a persistent implementation when ready.
-	userRepo := user.NewMemoryRepository()
+	db, err := orm.Open(cfg)
+	if err != nil {
+		log.Fatalf("connect database: %v", err)
+	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Fatalf("get database handle: %v", err)
+	}
+	defer sqlDB.Close()
+	userRepo := orm.NewUserRepository(db)
 	authService := auth.NewService(userRepo, auth.Config{
 		JWTSecret:          cfg.Auth.JWTSecret,
 		AccessTTL:          time.Duration(cfg.Auth.AccessTokenTTL) * time.Minute,

@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS orderbook_snapshots;
+DROP TABLE IF EXISTS liquidations;
+DROP TABLE IF EXISTS derivatives;
+DROP TABLE IF EXISTS klines;
+DROP TABLE IF EXISTS trades;

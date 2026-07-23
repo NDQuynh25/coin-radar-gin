@@ -28,9 +28,6 @@ func main() {
 	}
 	defer pool.Close()
 	repository := timescale.NewTradeRepository(pool)
-	if err := repository.EnsureSchema(ctx); err != nil {
-		log.Fatalf("prepare storage: %v", err)
-	}
 
 	trades := make(chan *market.Trade, cfg.Ingestor.BufferSize)
 	active := 0
