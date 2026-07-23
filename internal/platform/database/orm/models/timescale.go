@@ -7,17 +7,15 @@ import "time"
 // SQL-migration/pgx responsibilities.
 
 type Trade struct {
-	ID        string     `gorm:"column:id;type:uuid;primaryKey"`
-	Time      time.Time  `gorm:"column:time"`
-	Exchange  string     `gorm:"column:exchange"`
-	TradeID   string     `gorm:"column:trade_id"`
-	Symbol    string     `gorm:"column:symbol"`
-	Price     float64    `gorm:"column:price"`
-	Qty       float64    `gorm:"column:qty"`
-	Side      string     `gorm:"column:side"`
-	CreatedAt time.Time  `gorm:"column:created_at"`
-	UpdatedAt time.Time  `gorm:"column:updated_at"`
-	DeletedAt *time.Time `gorm:"column:deleted_at"`
+	ID       string    `gorm:"column:id;type:uuid;primaryKey"`
+	Time     time.Time `gorm:"column:time"`
+	Exchange string    `gorm:"column:exchange"`
+	TradeID  string    `gorm:"column:trade_id"`
+	Symbol   string    `gorm:"column:symbol"`
+	Price    float64   `gorm:"column:price"`
+	Qty      float64   `gorm:"column:qty"`
+	Side     string    `gorm:"column:side"`
+	AuditFields
 }
 
 func (Trade) TableName() string { return "trades" }
@@ -33,6 +31,7 @@ type Kline struct {
 	Close      float64   `gorm:"column:close"`
 	Volume     float64   `gorm:"column:volume"`
 	TradeCount *int      `gorm:"column:trade_count"`
+	AuditFields
 }
 
 func (Kline) TableName() string { return "klines" }
@@ -46,6 +45,7 @@ type Derivative struct {
 	OpenInterest    *float64   `gorm:"column:open_interest"`
 	MarkPrice       *float64   `gorm:"column:mark_price"`
 	IndexPrice      *float64   `gorm:"column:index_price"`
+	AuditFields
 }
 
 func (Derivative) TableName() string { return "derivatives" }
@@ -58,6 +58,7 @@ type Liquidation struct {
 	Price    float64   `gorm:"column:price"`
 	Qty      float64   `gorm:"column:qty"`
 	ValueUSD *float64  `gorm:"column:value_usd"`
+	AuditFields
 }
 
 func (Liquidation) TableName() string { return "liquidations" }
@@ -68,6 +69,7 @@ type OrderbookSnapshot struct {
 	Symbol   string    `gorm:"column:symbol"`
 	Bids     []byte    `gorm:"column:bids;type:jsonb"`
 	Asks     []byte    `gorm:"column:asks;type:jsonb"`
+	AuditFields
 }
 
 func (OrderbookSnapshot) TableName() string { return "orderbook_snapshots" }
@@ -83,6 +85,7 @@ type WhaleTransfer struct {
 	Amount       *string   `gorm:"column:amount;type:numeric"`
 	ValueUSD     *float64  `gorm:"column:value_usd"`
 	Direction    *string   `gorm:"column:direction"`
+	AuditFields
 }
 
 func (WhaleTransfer) TableName() string { return "whale_transfers" }
@@ -97,6 +100,7 @@ type Signal struct {
 	Value     *float64  `gorm:"column:value"`
 	Threshold *float64  `gorm:"column:threshold"`
 	Payload   []byte    `gorm:"column:payload;type:jsonb"`
+	AuditFields
 }
 
 func (Signal) TableName() string { return "signals" }

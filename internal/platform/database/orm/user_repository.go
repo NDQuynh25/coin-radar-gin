@@ -85,8 +85,11 @@ func (r *UserRepository) find(ctx context.Context, query *gorm.DB) (*user.User, 
 
 func toUserRow(u *user.User) *models.User {
 	return &models.User{ID: u.ID, TelegramID: nullableInt64(u.TelegramID), Email: nullableString(u.Email),
-		Username: nullableString(u.Username), PasswordHash: nullableString(u.PasswordHash), CreatedAt: u.CreatedAt,
-		UpdatedAt: u.UpdatedAt, DeletedAt: u.DeletedAt, CreatedBy: nullableString(u.CreatedBy), UpdatedBy: nullableString(u.UpdatedBy)}
+		Username: nullableString(u.Username), PasswordHash: nullableString(u.PasswordHash),
+		AuditFields: models.AuditFields{
+			CreatedAt: u.CreatedAt, UpdatedAt: u.UpdatedAt, DeletedAt: u.DeletedAt,
+			CreatedBy: nullableString(u.CreatedBy), UpdatedBy: nullableString(u.UpdatedBy),
+		}}
 }
 
 func fromUserRow(row models.User) *user.User {

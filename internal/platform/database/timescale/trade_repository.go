@@ -22,6 +22,7 @@ func (r *TradeRepository) SaveBatch(ctx context.Context, trades []*market.Trade)
 	if len(trades) == 0 {
 		return nil
 	}
+
 	batch := &pgx.Batch{}
 	for _, trade := range trades {
 		batch.Queue(`INSERT INTO trades (time, exchange, trade_id, symbol, price, qty, side)
@@ -44,6 +45,7 @@ WHERE symbol=$1 AND deleted_at IS NULL ORDER BY time DESC LIMIT $2`, symbol, lim
 	if err != nil {
 		return nil, err
 	}
+
 	defer rows.Close()
 	result := make([]*market.Trade, 0, limit)
 	for rows.Next() {

@@ -1,14 +1,7 @@
 {
-  "eslint.useFlatConfig": true,
-  "eslint.validate": [
-    "javascript"
-  ],
-  "eslint.workingDirectories": [
-    {
-      "mode": "auto"
-    }
-  ],
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  }
+  "[go]": {
+    "editor.defaultFormatter": "golang.go",
+    "editor.formatOnSave": true
+  },
+  "go.formatTool": "goimports"
 }
