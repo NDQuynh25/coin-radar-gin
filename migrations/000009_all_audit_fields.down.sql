@@ -7,4 +7,12 @@ ALTER TABLE whale_transfers DROP COLUMN IF EXISTS updated_by, DROP COLUMN IF EXI
 ALTER TABLE orderbook_snapshots DROP COLUMN IF EXISTS updated_by, DROP COLUMN IF EXISTS created_by, DROP COLUMN IF EXISTS deleted_at, DROP COLUMN IF EXISTS updated_at, DROP COLUMN IF EXISTS created_at;
 ALTER TABLE liquidations DROP COLUMN IF EXISTS updated_by, DROP COLUMN IF EXISTS created_by, DROP COLUMN IF EXISTS deleted_at, DROP COLUMN IF EXISTS updated_at, DROP COLUMN IF EXISTS created_at;
 ALTER TABLE derivatives DROP COLUMN IF EXISTS updated_by, DROP COLUMN IF EXISTS created_by, DROP COLUMN IF EXISTS deleted_at, DROP COLUMN IF EXISTS updated_at, DROP COLUMN IF EXISTS created_at;
+
+SELECT remove_compression_policy('klines', if_exists => TRUE);
+ALTER TABLE klines SET (timescaledb.compress = FALSE);
 ALTER TABLE klines DROP COLUMN IF EXISTS updated_by, DROP COLUMN IF EXISTS created_by, DROP COLUMN IF EXISTS deleted_at, DROP COLUMN IF EXISTS updated_at, DROP COLUMN IF EXISTS created_at;
+ALTER TABLE klines SET (
+    timescaledb.compress,
+    timescaledb.compress_segmentby = 'symbol, interval'
+);
+SELECT add_compression_policy('klines', INTERVAL '30 days');

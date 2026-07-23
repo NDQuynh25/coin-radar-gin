@@ -1,3 +1,6 @@
+SELECT remove_compression_policy('klines', if_exists => TRUE);
+ALTER TABLE klines SET (timescaledb.compress = FALSE);
+
 ALTER TABLE klines
     ADD COLUMN created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     ADD COLUMN updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -55,3 +58,9 @@ ALTER TABLE known_wallets
     ADD COLUMN deleted_at TIMESTAMPTZ,
     ADD COLUMN created_by UUID,
     ADD COLUMN updated_by UUID;
+
+ALTER TABLE klines SET (
+    timescaledb.compress,
+    timescaledb.compress_segmentby = 'symbol, interval'
+);
+SELECT add_compression_policy('klines', INTERVAL '30 days');
