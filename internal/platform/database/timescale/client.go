@@ -27,7 +27,7 @@ func NewPgxPool(cfg *config.Config) (*pgxpool.Pool, error) {
 	}
 
 	// Configure pool parameters
-	poolConfig.MaxConns = 50
+	poolConfig.MaxConns = 50 //
 	poolConfig.MinConns = 5
 	poolConfig.MaxConnLifetime = 30 * time.Minute
 	poolConfig.MaxConnIdleTime = 15 * time.Minute
