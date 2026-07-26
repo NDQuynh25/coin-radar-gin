@@ -10,5 +10,6 @@ bin/
 !.env.example
 .cache/
 
+node_modules/
 # Generated Prisma client
 internal/platform/postgres/prisma/*_gen.go
