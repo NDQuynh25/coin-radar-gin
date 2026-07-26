@@ -4,17 +4,21 @@ package models
 
 import "time"
 
+type AuditFields struct {
+	CreatedAt time.Time  `gorm:"column:created_at"`
+	UpdatedAt time.Time  `gorm:"column:updated_at"`
+	DeletedAt *time.Time `gorm:"column:deleted_at"`
+	CreatedBy *string    `gorm:"column:created_by;type:uuid"`
+	UpdatedBy *string    `gorm:"column:updated_by;type:uuid"`
+}
+
 type User struct {
-	ID           string     `gorm:"column:id;type:uuid;primaryKey"`
-	TelegramID   *int64     `gorm:"column:telegram_id"`
-	Email        *string    `gorm:"column:email"`
-	Username     *string    `gorm:"column:username"`
-	PasswordHash *string    `gorm:"column:password_hash"`
-	CreatedAt    time.Time  `gorm:"column:created_at"`
-	UpdatedAt    time.Time  `gorm:"column:updated_at"`
-	DeletedAt    *time.Time `gorm:"column:deleted_at"`
-	CreatedBy    *string    `gorm:"column:created_by;type:uuid"`
-	UpdatedBy    *string    `gorm:"column:updated_by;type:uuid"`
+	ID           string  `gorm:"column:id;type:uuid;primaryKey"`
+	TelegramID   *int64  `gorm:"column:telegram_id"`
+	Email        *string `gorm:"column:email"`
+	Username     *string `gorm:"column:username"`
+	PasswordHash *string `gorm:"column:password_hash"`
+	AuditFields
 }
 
 func (User) TableName() string { return "users" }
@@ -26,11 +30,7 @@ type Subscription struct {
 	Status    string     `gorm:"column:status"`
 	StartedAt time.Time  `gorm:"column:started_at"`
 	ExpiresAt *time.Time `gorm:"column:expires_at"`
-	CreatedAt time.Time  `gorm:"column:created_at"`
-	UpdatedAt time.Time  `gorm:"column:updated_at"`
-	DeletedAt *time.Time `gorm:"column:deleted_at"`
-	CreatedBy *string    `gorm:"column:created_by;type:uuid"`
-	UpdatedBy *string    `gorm:"column:updated_by;type:uuid"`
+	AuditFields
 }
 
 func (Subscription) TableName() string { return "subscriptions" }
@@ -43,8 +43,8 @@ type Payment struct {
 	Network     string     `gorm:"column:network"`
 	TxHash      *string    `gorm:"column:tx_hash"`
 	Status      string     `gorm:"column:status"`
-	CreatedAt   time.Time  `gorm:"column:created_at"`
 	ConfirmedAt *time.Time `gorm:"column:confirmed_at"`
+	AuditFields
 }
 
 func (Payment) TableName() string { return "payments" }
@@ -60,20 +60,40 @@ type AlertRule struct {
 	IsActive  bool       `gorm:"column:is_active"`
 	CooldownS int        `gorm:"column:cooldown_s"`
 	LastFired *time.Time `gorm:"column:last_fired"`
-	CreatedAt time.Time  `gorm:"column:created_at"`
-	UpdatedAt time.Time  `gorm:"column:updated_at"`
-	DeletedAt *time.Time `gorm:"column:deleted_at"`
-	CreatedBy *string    `gorm:"column:created_by;type:uuid"`
-	UpdatedBy *string    `gorm:"column:updated_by;type:uuid"`
+	AuditFields
 }
 
 func (AlertRule) TableName() string { return "alert_rules" }
 
 type Watchlist struct {
-	ID        string    `gorm:"column:id;type:uuid;primaryKey"`
-	UserID    string    `gorm:"column:user_id;type:uuid"`
-	Symbol    string    `gorm:"column:symbol"`
-	CreatedAt time.Time `gorm:"column:created_at"`
+	ID     string `gorm:"column:id;type:uuid;primaryKey"`
+	UserID string `gorm:"column:user_id;type:uuid"`
+	Symbol string `gorm:"column:symbol"`
+	AuditFields
 }
 
 func (Watchlist) TableName() string { return "watchlists" }
+
+type Symbol struct {
+	Symbol     string     `gorm:"column:symbol;primaryKey"`
+	BaseAsset  string     `gorm:"column:base_asset"`
+	QuoteAsset string     `gorm:"column:quote_asset"`
+	Exchange   string     `gorm:"column:exchange"`
+	MarketType string     `gorm:"column:market_type"`
+	IsActive   bool       `gorm:"column:is_active"`
+	ListedAt   *time.Time `gorm:"column:listed_at"`
+	AuditFields
+}
+
+func (Symbol) TableName() string { return "symbols" }
+
+type KnownWallet struct {
+	Address    string  `gorm:"column:address;primaryKey"`
+	Chain      string  `gorm:"column:chain"`
+	Label      *string `gorm:"column:label"`
+	Category   *string `gorm:"column:category"`
+	IsExchange bool    `gorm:"column:is_exchange"`
+	AuditFields
+}
+
+func (KnownWallet) TableName() string { return "known_wallets" }
